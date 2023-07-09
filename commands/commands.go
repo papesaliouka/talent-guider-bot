@@ -14,7 +14,7 @@ func registerSlashCommands(s *discordgo.Session) {
 		},
 		{
 			Name:        "projectlist",
-			Description: "Get the list of submitted projects.",
+			Description: "Get the list of all 01 projects for the 18month",
 		},
 		{
 			Name:        "help",

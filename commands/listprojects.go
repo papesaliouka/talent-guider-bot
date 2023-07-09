@@ -10,7 +10,7 @@ func handleProjectListInteraction(s *discordgo.Session, i *discordgo.Interaction
 	response := discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
-			Content: "https://01edu.notion.site/Global-01-Curriculum-50b7d94ac56a429fb3aee19a32248732",
+			Content: "Useful link about **01 pedagogy highly recommmend** to checkit out.\nhttps://01edu.notion.site/Content-b00cf9d4179f423f901eeb48e9345c16",
 		},
 	}
 

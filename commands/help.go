@@ -12,7 +12,6 @@ func handleHelpInteraction(s *discordgo.Session, i *discordgo.InteractionCreate)
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: "Available Commands:\n" +
-				BotPrefix + "ping - Check if the bot is responsive.\n" +
 				BotPrefix + "projectlist - Get the list of submitted projects.\n" +
 				BotPrefix + "help - Display this help message.",
 		},
