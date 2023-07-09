@@ -7,10 +7,21 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func submitProject(s *discordgo.Session, m *discordgo.MessageCreate) error {
+func handleSubmitProject(s *discordgo.Session, m *discordgo.MessageCreate, args []string) {
+	err := submitProject(s, m, args)
+	if err != nil {
+		s.ChannelMessageSend(m.ChannelID, "Error submitting project. Please try again later.")
+		fmt.Println("Error submitting project:", err)
+		return
+	}
+
+	s.ChannelMessageSend(m.ChannelID, "Thank you for submitting your project!")
+}
+
+func submitProject(s *discordgo.Session, m *discordgo.MessageCreate, args []string) error {
 	// Extract necessary information from the message, such as project name and description
-	projectName := "Sample Project"
-	projectDescription := "This is a sample project description."
+	projectName := args[0]
+	projectDescription := args[1]
 
 	// Format the project information
 	projectInfo := fmt.Sprintf("Name: %s\nDescription: %s\n\n", projectName, projectDescription)

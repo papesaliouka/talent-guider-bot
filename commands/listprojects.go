@@ -1,8 +1,11 @@
 package commands
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 func getProjectList() (string, error) {
@@ -20,4 +23,16 @@ func getProjectList() (string, error) {
 	}
 
 	return string(content), nil
+}
+
+func handleProjectList(s *discordgo.Session, m *discordgo.MessageCreate) {
+	projectList, err := getProjectList()
+	if err != nil {
+		s.ChannelMessageSend(m.ChannelID, "Error retrieving project list. Please try again later.")
+		fmt.Println("Error retrieving project list:", err)
+		return
+	}
+
+	s.ChannelMessageSend(m.ChannelID, "Project List:\n"+projectList)
+	
 }

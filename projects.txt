@@ -1,3 +1,44 @@
-Name: Sample Project
-Description: This is a sample project description.
+**Name**: go-reloaded
+**Description**: A simple tool for text completion, formatting and auto-correction.
+**Requirements**: **🔴 Mandatory** / **Go** / **1 student** / **1 week**
+**Additional Infos**: Your very first project as a student. You will freshen up on your knowledge from the piscine by creating a very simple tool for text completion, formatting and auto-correction. You will learn to process command line arguments and the basics of string manipulation. You will learn to read from and write to the file system.
 
+**Name**: tetris-optimizer
+**Description**: Arrange tetriminos into the smallest possible square.
+**Requirements**: **🟢 Open** / **Go** / **1 student** / **1 week**
+**Additional Infos**: You will open and parse a list of tetriminos from a file. You will need to validate that the teriminos are valid, and create an algorithm which will arrange them into the smallest possible square.
+
+**Name**: atm-management-system
+**Description**: Add new features to an ATM management system, as part of an existing C project.
+**Requirements**: **🟢 Open** / **C** / **1 student** / **1 week**
+**Additional Infos**: You will expand an existing C project by adding features to an ATM management system. You will learn about the fundamentals of C, Makefiles, data structures, memory management, pipes and child processes. Optionally you may implement a lightweight database: SQLite
+
+**Name**: ascii-art
+**Description**: Convert a string into a graphic composed of ascii characters.
+**Requirements**: **🔴 Mandatory** / **Go** / **2-3 students** / **1 week**
+**Additional Infos**: You will convert a command line argument into a multi-line graphic using only ascii characters. You will learn about parsing files. You may optionally accept command line flags to add bonus features to your project.
+
+**Name**: color
+**Description**: Colour the ascii-art project.
+**Requirements**: **🟡 Optional** / **Go** / **2-3 students** / **1 week**
+**Additional Infos**: You will add a command-line flag to your ascii project which will specify the colour of the output. You'll learn about terminal formatting.
+
+**Name**: output
+**Description**: Write the ascii-art project to a file.
+**Requirements**: **🟡 Optional** / **Go** / **2-3 students** / **1 week**
+**Additional Infos**: You will add a command line flag to your ascii project which will specify a file path. You'll write the output to that file.
+
+**Name**: fs
+**Description**: Add some flair to the ascii-art project.
+**Requirements**: **🟡 Optional** / **Go** / **2-3 students** / **1 week**
+**Additional Infos**: You will add a command line flag to your ascii-art project which will specify a path. You'll read the graphic style from the file at that path to create a different appearance.
+
+**Name**: justify
+**Description**: Position the ascii-art project nicely in the terminal.
+**Requirements**: **🟡 Optional** / **Go** / **2-3 students** / **1 week**
+**Additional Infos**: You will add a command line flag to your ascii-art project which will specify alignment. You will need to know how wide the terminal is, so as to position the graphic correctly.
+
+**Name**: reverse
+**Description**: Reverse engineer the ascii-art project.
+**Requirements**: **🟡 Optional** / **Go** / **2-3 students** / **1 week**
+**Additional Infos**: You will need to reverse engineer your ascii-art project. You will accept a command line flag which specifies a path to a file. You'll open that file which contains an ascii-art project, and print its raw string equivalent to the output. Don't forget to validate the file.

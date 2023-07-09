@@ -37,6 +37,4 @@ func Start() {
 
 	fmt.Println("Bot is running")
 
-	// Cleanly close the Discord session
-
 }

@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"fmt"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -11,73 +11,33 @@ func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if m.Content == BotPrefix+"ping" {
-		s.ChannelMessageSend(m.ChannelID, "pong")
+	// Parse the message content to get the command and arguments
+	parts := strings.Fields(m.Content)
+	if len(parts) < 1 {
+		return
 	}
 
-	if m.Content == BotPrefix+"submitproject" {
-		err := submitProject(s, m)
-		if err != nil {
-			s.ChannelMessageSend(m.ChannelID, "Error submitting project. Please try again later.")
-			fmt.Println("Error submitting project:", err)
-			return
-		}
+	command := parts[0]
+	args := parts[1:]
 
-		s.ChannelMessageSend(m.ChannelID, "Thank you for submitting your project!")
+	switch command {
+	case BotPrefix + "ping":
+		handlePing(s, m, args)
+	case BotPrefix + "submitproject":
+		handleSubmitProject(s, m, args)
+	case BotPrefix + "projectlist":
+		handleProjectList(s, m)
+	case BotPrefix + "projectdetails":
+		handleProjectDetails(s, m, args)
+	case BotPrefix + "solvedproject":
+		handleSolvedProject(s, m, args)
+	case BotPrefix + "addproject":
+		handleAddProject(s, m, args)
+	case BotPrefix + "help":
+		handleHelp(s, m, args)
 	}
+}
 
-	if m.Content == BotPrefix+"projectlist" {
-		projectList, err := getProjectList()
-		if err != nil {
-			s.ChannelMessageSend(m.ChannelID, "Error retrieving project list. Please try again later.")
-			fmt.Println("Error retrieving project list:", err)
-			return
-		}
-
-		s.ChannelMessageSend(m.ChannelID, "Project List:\n"+projectList)
-	}
-
-	if m.Content == BotPrefix+"projectdetails" {
-		// Extract necessary information from the message, such as project name or identifier
-		projectName := "Sample Project"
-
-		projectDetails, err := getProjectDetails(projectName)
-		if err != nil {
-			s.ChannelMessageSend(m.ChannelID, "Error retrieving project details. Please try again later.")
-			fmt.Println("Error retrieving project details:", err)
-			return
-		}
-
-		s.ChannelMessageSend(m.ChannelID, "Project Details:\n"+projectDetails)
-	}
-
-	if m.Content == BotPrefix+"solvedproject" {
-		incrementSolvedProjects()
-		s.ChannelMessageSend(m.ChannelID, "Solved project count incremented.")
-	}
-
-	if m.Content == BotPrefix+"help" {
-		sendHelpMessage(s, m.ChannelID)
-	}
-
-	if m.Content == BotPrefix+"addproject" {
-		// Check if the user has administrative privileges (you can adjust the condition based on your server's roles/permissions)
-		if isAdmin(m.Author.ID) {
-			// Extract necessary information from the message, such as project name and description
-			projectName := "Sample Project"
-			projectDescription := "This is a sample project description."
-
-			err := addProject(projectName, projectDescription)
-			if err != nil {
-				s.ChannelMessageSend(m.ChannelID, "Error adding project. Please try again later.")
-				fmt.Println("Error adding project:", err)
-				return
-			}
-
-			s.ChannelMessageSend(m.ChannelID, "Project added successfully!")
-		} else {
-			s.ChannelMessageSend(m.ChannelID, "You do not have permission to use this command.")
-		}
-	}
-
+func handlePing(s *discordgo.Session, m *discordgo.MessageCreate, args []string) {
+	s.ChannelMessageSend(m.ChannelID, "pong")
 }
