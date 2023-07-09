@@ -1,16 +1,26 @@
 package commands
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"log"
 
-func handleHelp(s *discordgo.Session, m *discordgo.MessageCreate, args []string) {
-	helpMessage := "Available Commands:\n" +
-		BotPrefix + "ping - Check if the bot is responsive.\n" +
-		BotPrefix + "submitproject [projectName] [projectDescription] - Submit a project.\n" +
-		BotPrefix + "projectlist - Get the list of submitted projects.\n" +
-		BotPrefix + "projectdetails [projectName] - Get the details of a specific project.\n" +
-		BotPrefix + "solvedproject - Increment the count of solved projects.\n" +
-		BotPrefix + "addproject [projectName] [projectDescription] - Add a project to the list of projects (admin only).\n" +
-		BotPrefix + "help - Display this help message."
+	"github.com/bwmarrin/discordgo"
+)
 
-	s.ChannelMessageSend(m.ChannelID, helpMessage)
+func handleHelpInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Construct the response message
+	response := &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "Available Commands:\n" +
+				BotPrefix + "ping - Check if the bot is responsive.\n" +
+				BotPrefix + "projectlist - Get the list of submitted projects.\n" +
+				BotPrefix + "help - Display this help message.",
+		},
+	}
+
+	// Send the response message
+	err := s.InteractionRespond(i.Interaction, response)
+	if err != nil {
+		log.Printf("Failed to send help response: %s", err)
+	}
 }

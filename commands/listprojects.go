@@ -1,38 +1,18 @@
 package commands
 
 import (
-	"fmt"
-	"io/ioutil"
-	"os"
-
 	"github.com/bwmarrin/discordgo"
 )
 
-func getProjectList() (string, error) {
-	// Read the project list file
-	file, err := os.Open("projects.txt")
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
+func handleProjectListInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Extract necessary data from i.Data.Options if needed
 
-	// Read the contents of the file
-	content, err := ioutil.ReadAll(file)
-	if err != nil {
-		return "", err
+	response := discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "https://01edu.notion.site/Global-01-Curriculum-50b7d94ac56a429fb3aee19a32248732",
+		},
 	}
 
-	return string(content), nil
-}
-
-func handleProjectList(s *discordgo.Session, m *discordgo.MessageCreate) {
-	projectList, err := getProjectList()
-	if err != nil {
-		s.ChannelMessageSend(m.ChannelID, "Error retrieving project list. Please try again later.")
-		fmt.Println("Error retrieving project list:", err)
-		return
-	}
-
-	s.ChannelMessageSend(m.ChannelID, "Project List:\n"+projectList)
-	
+	s.InteractionRespond(i.Interaction, &response)
 }
