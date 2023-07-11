@@ -26,6 +26,8 @@ func Start() {
 	BotId = u.ID
 
 	goBot.AddHandler(interactionCreateHandler)
+	goBot.AddHandler(buttonInteractionHandler)
+	goBot.AddHandler(selectInteractionHandler)
 
 	err = goBot.Open()
 

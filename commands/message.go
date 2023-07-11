@@ -5,16 +5,27 @@ import (
 )
 
 func interactionCreateHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
-
-	switch i.ApplicationCommandData().Name {
-	case "ping":
+	switch i.Interaction.Type {
+	case discordgo.InteractionPing:
 		handlePingInteraction(s, i)
-	case "projectlist":
-		handleProjectListInteraction(s, i)
-	case "help":
-		handleHelpInteraction(s, i)
-	}
+	case discordgo.InteractionApplicationCommand:
+		switch i.ApplicationCommandData().Name {
+		case "projectlist":
+			handleProjectListInteraction(s, i)
+		case "help":
+			handleHelpInteraction(s, i)
+		case "selectexercise":
+			handleShowExerciseInteraction2(s, i)
+		case "dailychallenge":
+			handleDailyChallengeInteraction(s, i)
 
+		}
+	case discordgo.InteractionMessageComponent:
+		switch i.MessageComponentData().CustomID {
+		case "selectexercise":
+			handleShowExerciseInteraction2(s, i)
+		}
+	}
 }
 
 func handlePingInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {

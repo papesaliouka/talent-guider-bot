@@ -11,6 +11,9 @@ func registerSlashCommands(s *discordgo.Session) {
 		{
 			Name:        "ping",
 			Description: "Check if the bot is responsive.",
+		}, {
+			Name:        "dailychallenge",
+			Description: "Get the daily challenge exercises taken from checkpoint.",
 		},
 		{
 			Name:        "projectlist",
@@ -18,7 +21,18 @@ func registerSlashCommands(s *discordgo.Session) {
 		},
 		{
 			Name:        "help",
-			Description: "Display the available commands.",
+			Description: "Display the available commands for Talent Guider .",
+		}, {
+			Name:        "selectexercise",
+			Description: "Show the exercise list for a given level in the checpoint.",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionInteger,
+					Name:        "level",
+					Description: "The level number for the checkpoint exercise list.",
+					Required:    true,
+				},
+			},
 		},
 	}
 
