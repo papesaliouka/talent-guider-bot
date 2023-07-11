@@ -21,7 +21,7 @@ func registerSlashCommands(s *discordgo.Session) {
 		},
 		{
 			Name:        "help",
-			Description: "Display the available commands for Talent Guider .",
+			Description: "Display the available commands for Talent Guider.",
 		}, {
 			Name:        "selectexercise",
 			Description: "Show the exercise list for a given level in the checpoint.",
