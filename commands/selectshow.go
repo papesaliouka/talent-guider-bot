@@ -74,12 +74,12 @@ func fetchExercise2(s *discordgo.Session, i *discordgo.InteractionCreate, exerci
 	cmd := exec.Command("wget", "-O", outputPath, fileURL)
 	err := cmd.Run()
 	if err != nil {
-		log.Fatalf("Failed to execute wget command: %v", err)
+		log.Printf("Failed to execute wget command: %v", err)
 	}
 
 	content, err := ioutil.ReadFile(outputPath)
 	if err != nil {
-		log.Fatalf("Failed to read exercise file: %v", err)
+		log.Printf("Failed to read exercise file: %v", err)
 	}
 
 	// Create the response with the fetched exercise content
@@ -93,6 +93,6 @@ func fetchExercise2(s *discordgo.Session, i *discordgo.InteractionCreate, exerci
 
 	err = exec.Command("rm", outputPath).Run()
 	if err != nil {
-		log.Fatalf("Failed to delete exercise file: %v", err)
+		log.Printf("Failed to delete exercise file: %v", err)
 	}
 }
