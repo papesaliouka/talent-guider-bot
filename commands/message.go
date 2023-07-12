@@ -14,6 +14,8 @@ func interactionCreateHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			handlePingInteraction(s, i)
 		case "projectlist":
 			handleProjectListInteraction(s, i)
+		case "viewproject":
+			handleViewProjectInteraction(s, i)
 		case "help":
 			handleHelpInteraction(s, i)
 		case "selectexercise":

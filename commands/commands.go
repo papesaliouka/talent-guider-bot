@@ -18,6 +18,17 @@ func registerSlashCommands(s *discordgo.Session) {
 		{
 			Name:        "projectlist",
 			Description: "Get the list of all 01 projects for the 18month",
+		}, {
+			Name:        "viewproject",
+			Description: "Show the readme of a project in the 01-edu repo only the mandatory projects for now not optionals",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "projectname",
+					Description: "The project name",
+					Required:    true,
+				},
+			},
 		},
 		{
 			Name:        "help",
