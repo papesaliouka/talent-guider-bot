@@ -10,6 +10,8 @@ func interactionCreateHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		handlePingInteraction(s, i)
 	case discordgo.InteractionApplicationCommand:
 		switch i.ApplicationCommandData().Name {
+		case "ping":
+			handlePingInteraction(s, i)
 		case "projectlist":
 			handleProjectListInteraction(s, i)
 		case "help":
@@ -18,7 +20,8 @@ func interactionCreateHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			handleShowExerciseInteraction2(s, i)
 		case "dailychallenge":
 			handleDailyChallengeInteraction(s, i)
-
+		case "askchat":
+			handleAskChatInteraction(s, i)
 		}
 	case discordgo.InteractionMessageComponent:
 		switch i.MessageComponentData().CustomID {
