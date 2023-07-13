@@ -29,6 +29,17 @@ func registerSlashCommands(s *discordgo.Session) {
 					Required:    true,
 				},
 			},
+		}, {
+			Name:        "viewaudit",
+			Description: "Show the readme of a project audit in the 01-edu repo only the mandatory projects for now not optionals",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "projectname",
+					Description: "The project name ",
+					Required:    true,
+				},
+			},
 		},
 		{
 			Name:        "help",

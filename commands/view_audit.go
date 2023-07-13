@@ -10,13 +10,13 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func handleViewProjectInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func handleViewAuditInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	projectNameOption := i.ApplicationCommandData().Options[0]
 	projectName := projectNameOption.StringValue()
 
 	projectName = strings.ToLower(projectName)
 
-	readmeContent, err := getReadmeContent(projectName)
+	readmeContent, err := getAuditReadmeContent(projectName)
 	if err != nil {
 		log.Printf("Failed to fetch readme content: %v", err)
 		response := &discordgo.InteractionResponse{
@@ -31,44 +31,9 @@ func handleViewProjectInteraction(s *discordgo.Session, i *discordgo.Interaction
 
 	sendMultipleMessages(s, i.Interaction, projectName, readmeContent)
 }
-func sendMultipleMessages(s *discordgo.Session, interaction *discordgo.Interaction, projectName, content string) {
-	const maxContentLength = 1934
 
-	// Split the content into chunks
-	chunks := splitContent(content, maxContentLength)
-
-	for i, chunk := range chunks {
-		// Create the response message for each chunk
-		// response := &discordgo.MessageSend{
-		// 	Content: fmt.Sprintf("Readme for project %s (Part %d):\n```%s```", projectName, i+1, chunk),
-		// }
-
-		// Send the response message
-		_, err := s.ChannelMessageSend(interaction.ChannelID, fmt.Sprintf("```Readme for project %s (Part %d):\n```%s``````", projectName, i+1, chunk))
-		if err != nil {
-			log.Printf("Failed to send message: %v", err)
-		}
-	}
-}
-
-func splitContent(content string, maxLength int) []string {
-	var chunks []string
-
-	for len(content) > maxLength {
-		chunk := content[:maxLength]
-		content = content[maxLength:]
-		chunks = append(chunks, chunk)
-	}
-
-	if len(content) > 0 {
-		chunks = append(chunks, content)
-	}
-
-	return chunks
-}
-
-func getReadmeContent(exerciseName string) (string, error) {
-	fileURL := fmt.Sprintf("https://raw.githubusercontent.com/01-edu/public/master/subjects/%s/README.md", exerciseName)
+func getAuditReadmeContent(exerciseName string) (string, error) {
+	fileURL := fmt.Sprintf("https://raw.githubusercontent.com/01-edu/public/master/subjects/%s/audit/README.md", exerciseName)
 	outputPath := exerciseName + ".md"
 
 	cmd := exec.Command("wget", "-O", outputPath, fileURL)
