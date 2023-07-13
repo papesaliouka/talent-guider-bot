@@ -19,7 +19,7 @@ func interactionCreateHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		case "help":
 			handleHelpInteraction(s, i)
 		case "selectexercise":
-			handleShowExerciseInteraction2(s, i)
+			handleShowExerciseInteraction(s, i)
 		case "dailychallenge":
 			handleDailyChallengeInteraction(s, i)
 		case "askchat":
@@ -28,18 +28,8 @@ func interactionCreateHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 	case discordgo.InteractionMessageComponent:
 		switch i.MessageComponentData().CustomID {
 		case "selectexercise":
-			handleShowExerciseInteraction2(s, i)
+			handleShowExerciseInteraction(s, i)
 		}
 	}
 }
 
-func handlePingInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	response := discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: "Pong!",
-		},
-	}
-
-	s.InteractionRespond(i.Interaction, &response)
-}

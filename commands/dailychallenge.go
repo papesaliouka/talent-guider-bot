@@ -134,7 +134,7 @@ func loadLastExecutionDate() time.Time {
 	// Your implementation to load the last execution date from a file or database
 	// Example:
 	// Read the last execution date from a file
-	lastExecutionStr, err := ioutil.ReadFile("last_execution.txt")
+	lastExecutionStr, err := ioutil.ReadFile("data/last_execution.txt")
 	if err != nil {
 		// Error handling
 		return time.Time{}
@@ -161,7 +161,7 @@ func storeLastExecutionDate(date time.Time) {
 	lastExecutionStr := date.Format(time.RFC3339)
 
 	// Write the last execution date to a file
-	err := ioutil.WriteFile("last_execution.txt", []byte(lastExecutionStr), 0644)
+	err := ioutil.WriteFile("data/last_execution.txt", []byte(lastExecutionStr), 0644)
 	if err != nil {
 		// Error handling
 	}
@@ -193,7 +193,7 @@ func sendPreviousChallengeResult(s *discordgo.Session, i *discordgo.InteractionC
 // Store the daily challenge result in a file
 func storeDailyChallengeResult(result string) error {
 	// Write the daily challenge result to the file
-	err := ioutil.WriteFile("daily_challenge.txt", []byte(result), 0644)
+	err := ioutil.WriteFile("data/daily_challenge.txt", []byte(result), 0644)
 	if err != nil {
 		return err
 	}
@@ -204,7 +204,7 @@ func storeDailyChallengeResult(result string) error {
 // Retrieve the previous challenge result from a file
 func getPreviousChallengeResult() string {
 	// Read the content of the previous challenge file
-	content, err := ioutil.ReadFile("daily_challenge.txt")
+	content, err := ioutil.ReadFile("data/daily_challenge.txt")
 	if err != nil {
 		// Error handling
 		return ""

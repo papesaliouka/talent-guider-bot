@@ -1,4 +1,0 @@
-Daily Challenge for Level 2:
-Exercise: printalphabet
-Exercise: rot14
-Exercise: ispowerof2

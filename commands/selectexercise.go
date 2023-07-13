@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -9,13 +10,11 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func handleShowExerciseInteraction2(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func handleShowExerciseInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	levelOption := i.ApplicationCommandData().Options[0]
 	level := int(levelOption.IntValue())
 
 	exercises := ShowExercise(level)
-
-	fmt.Println("heremap")
 
 	if exercises != nil {
 		// Create the options for the select component
@@ -66,12 +65,12 @@ func selectInteractionHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		switch data.CustomID {
 		case "select_exercise":
 			exerciseName := data.Values[0]
-			fetchExercise2(s, i, exerciseName)
+			fetchExercise(s, i, exerciseName)
 		}
 	}
 }
 
-func fetchExercise2(s *discordgo.Session, i *discordgo.InteractionCreate, exerciseName string) {
+func fetchExercise(s *discordgo.Session, i *discordgo.InteractionCreate, exerciseName string) {
 	fileURL := fmt.Sprintf("https://raw.githubusercontent.com/01-edu/public/master/subjects/%s/README.md", exerciseName)
 	outputPath := exerciseName + ".md"
 
@@ -99,4 +98,36 @@ func fetchExercise2(s *discordgo.Session, i *discordgo.InteractionCreate, exerci
 	if err != nil {
 		log.Printf("Failed to delete exercise file: %v", err)
 	}
+}
+
+type ExerciseData struct {
+	Exercises map[string][]string `json:"exercises"`
+}
+
+func ShowExercise(level int) []string {
+	// Read exercise data from JSON file
+	filePath := "data/exercise.json"
+	exerciseData, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		fmt.Println("Failed to read exercise data:", err)
+		return nil
+	}
+
+	// Parse JSON data into ExerciseData struct
+	var data ExerciseData
+	err = json.Unmarshal(exerciseData, &data)
+	if err != nil {
+		fmt.Println("Failed to parse exercise data:", err)
+		return nil
+	}
+
+	// Retrieve exercises for the specified level
+	levelKey := fmt.Sprintf("%d", level)
+	exercises, ok := data.Exercises[levelKey]
+	if !ok {
+		fmt.Println("No exercises found for level", level)
+		return nil
+	}
+
+	return exercises
 }

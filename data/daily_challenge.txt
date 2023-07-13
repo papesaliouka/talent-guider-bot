@@ -1,0 +1,4 @@
+Daily Challenge for Level 4:
+Exercise: repeatalpha
+Exercise: capitalize
+Exercise: union
