@@ -1,0 +1,99 @@
+{
+  "exercises": {
+    "1": [
+      "displayfirstparam",
+      "displaylastparam",
+      "displayz",
+      "displaya",
+      "hello",
+      "onlya",
+      "onlyz",
+      "printdigits",
+      "strlen",
+      "paramcount",
+      "displayalpham",
+      "displayalrevm",
+      "countdown"
+    ],
+    "2": [
+      "nrune",
+      "lastrune",
+      "printstr",
+      "strrev",
+      "firstrune",
+      "printreversealphabet",
+      "printalphabet",
+      "wdmatch",
+      "ispowerof2",
+      "rot13",
+      "lastword",
+      "rot14",
+      "max",
+      "reduceint"
+    ],
+    "3": [
+      "switchcase",
+      "swap",
+      "compare",
+      "expandstr",
+      "tabmult",
+      "searchreplace",
+      "alphamirror",
+      "doop",
+      "findprevprime",
+      "reversebits",
+      "chunk",
+      "foldint"
+    ],
+    "4": [
+      "swapbits",
+      "capitalize",
+      "repeatalpha",
+      "atoi",
+      "reversestrcap",
+      "printbits",
+      "inter",
+      "union",
+      "piglatin",
+      "romannumbers"
+    ],
+    "5": [
+      "firstword",
+      "sortwordarr",
+      "cleanstr",
+      "addprimesum",
+      "printhex",
+      "gcd"
+    ],
+    "6": [
+      "printcomb",
+      "split",
+      "hiddenp",
+      "rostring",
+      "revwstr",
+      "reverserange",
+      "range",
+      "slice"
+    ],
+    "7": [
+      "itoa",
+      "atoibase",
+      "foreach",
+      "fprime",
+      "printrevcomb"
+    ],
+    "8": [
+      "listsize",
+      "rpncalc",
+      "brackets",
+      "options",
+      "grouping",
+      "printmemory"
+    ],
+    "9": [
+      "listremoveif",
+      "itoabase",
+      "brainfuck"
+    ]
+  }
+}

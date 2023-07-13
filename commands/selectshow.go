@@ -14,6 +14,9 @@ func handleShowExerciseInteraction2(s *discordgo.Session, i *discordgo.Interacti
 	level := int(levelOption.IntValue())
 
 	exercises := ShowExercise(level)
+
+	fmt.Println("heremap")
+
 	if exercises != nil {
 		// Create the options for the select component
 		var options []discordgo.SelectMenuOption
@@ -44,6 +47,7 @@ func handleShowExerciseInteraction2(s *discordgo.Session, i *discordgo.Interacti
 				},
 			},
 		}
+
 		s.InteractionRespond(i.Interaction, &response)
 	} else {
 		response := discordgo.InteractionResponse{
