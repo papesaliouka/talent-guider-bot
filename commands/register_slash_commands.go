@@ -14,6 +14,13 @@ func registerSlashCommands(s *discordgo.Session) {
 		}, {
 			Name:        "dailychallenge",
 			Description: "Get the daily challenge exercises taken from checkpoint.",
+		}, {
+			Name:        "startcoding",
+			Description: "Start coding session",
+		},
+		{
+			Name:        "endcoding",
+			Description: "End coding session",
 		},
 		{
 			Name:        "projectlist",

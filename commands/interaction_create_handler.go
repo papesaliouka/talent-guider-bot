@@ -26,6 +26,10 @@ func interactionCreateHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			handleDailyChallengeInteraction(s, i)
 		case "askchat":
 			handleAskChatInteraction(s, i)
+		case "startcoding":
+			handleStartCodingInteraction(s, i)
+		case "endcoding":
+			handleEndCodingInteraction(s, i)
 		}
 	case discordgo.InteractionMessageComponent:
 		switch i.MessageComponentData().CustomID {
@@ -34,4 +38,3 @@ func interactionCreateHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 		}
 	}
 }
-
