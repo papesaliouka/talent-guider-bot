@@ -49,7 +49,13 @@ func saveCodingSessionsToFile() error {
 }
 
 func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	userID := i.Interaction.Member.User.ID
+	var userID string
+
+	if i.Interaction.Member != nil {
+		userID = i.Interaction.Member.User.ID
+	} else {
+		userID = i.Interaction.User.ID
+	}
 
 	// Store the coding session in the slice
 	codingSessions = append(codingSessions, CodingSession{
@@ -88,7 +94,13 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 }
 
 func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	userID := i.Interaction.Member.User.ID
+	var userID string
+
+	if i.Interaction.Member != nil {
+		userID = i.Interaction.Member.User.ID
+	} else {
+		userID = i.Interaction.User.ID
+	}
 
 	// Find the coding session for the user
 	var sessionIndex = -1
