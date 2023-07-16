@@ -57,6 +57,21 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 		userID = i.Interaction.User.ID
 	}
 
+	// Check if the user already has an active coding session
+	for _, session := range codingSessions {
+		if session.UserID == userID && session.StartTime.Add(2*time.Hour).After(time.Now()) {
+			// User has an active session
+			response := discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: fmt.Sprintf("<@%s>, you already have an active coding session. Please wait until it ends or use the /endCoding command to stop the current session.", userID),
+				},
+			}
+			s.InteractionRespond(i.Interaction, &response)
+			return
+		}
+	}
+
 	// Store the coding session in the slice
 	codingSessions = append(codingSessions, CodingSession{
 		UserID:    userID,
