@@ -21,6 +21,9 @@ func registerSlashCommands(s *discordgo.Session) {
 		{
 			Name:        "endcoding",
 			Description: "End coding session",
+		}, {
+			Name:        "sendreport",
+			Description: "Send coding session reports to members",
 		},
 		{
 			Name:        "projectlist",

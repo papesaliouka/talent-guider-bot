@@ -30,6 +30,9 @@ func interactionCreateHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			handleStartCodingInteraction(s, i)
 		case "endcoding":
 			handleEndCodingInteraction(s, i)
+		case "sendreport":
+			// Handle sendreport interaction
+			handleSendReportInteraction(s, i)
 		}
 	case discordgo.InteractionMessageComponent:
 		switch i.MessageComponentData().CustomID {
