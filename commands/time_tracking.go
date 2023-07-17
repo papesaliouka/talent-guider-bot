@@ -16,6 +16,13 @@ type CodingSession struct {
 	Duration  time.Duration `json:"duration"`
 }
 
+type CodingSessionLog struct {
+	UserID    string        `json:"userID"`
+	StartTime time.Time     `json:"startTime"`
+	EndTime   time.Time     `json:"endTime"`
+	Duration  time.Duration `json:"duration"`
+}
+
 var codingSessions []CodingSession
 
 func loadCodingSessionsFromFile() error {
@@ -57,14 +64,13 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 		userID = i.Interaction.User.ID
 	}
 
-	// Check if the user already has an active coding session
+	// Check if there is an active coding session for the user
 	for _, session := range codingSessions {
-		if session.UserID == userID && session.StartTime.Add(2*time.Hour).After(time.Now()) {
-			// User has an active session
+		if session.UserID == userID {
 			response := discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: fmt.Sprintf("<@%s>, you already have an active coding session. Please wait until it ends or use the /endCoding command to stop the current session.", userID),
+					Content: fmt.Sprintf("<@%s>, you already have an active coding session. You cannot start a new session until the current session ends.", userID),
 				},
 			}
 			s.InteractionRespond(i.Interaction, &response)
@@ -108,6 +114,35 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 	}
 }
 
+func saveCodingSessionToLog(userID string, startTime, endTime time.Time, duration time.Duration) error {
+	sessionLog := CodingSessionLog{
+		UserID:    userID,
+		StartTime: startTime,
+		EndTime:   endTime,
+		Duration:  duration,
+	}
+
+	file, err := os.OpenFile("log.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	logData, err := json.Marshal(sessionLog)
+	if err != nil {
+		return err
+	}
+
+	logEntry := string(logData) + "\n"
+
+	_, err = file.WriteString(logEntry)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	var userID string
 
@@ -138,11 +173,12 @@ func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCr
 		return
 	}
 
-	// Calculate the duration of the coding session
+	// Calculate the duration and end time of the coding session
 	startTime := codingSessions[sessionIndex].StartTime
-	duration := time.Since(startTime)
+	endTime := time.Now()
+	duration := endTime.Sub(startTime)
 
-	// Update the coding session with the duration
+	// Update the coding session with the end time and duration
 	codingSessions[sessionIndex].Duration = duration
 
 	response := discordgo.InteractionResponse{
@@ -154,9 +190,15 @@ func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCr
 
 	s.InteractionRespond(i.Interaction, &response)
 
+	// Remove the coding session from the slice
+	codingSessions = append(codingSessions[:sessionIndex], codingSessions[sessionIndex+1:]...)
+
 	// Save the updated coding sessions to the file
 	err := saveCodingSessionsToFile()
 	if err != nil {
 		log.Printf("Failed to save coding sessions: %v", err)
 	}
+
+	// Log the coding session to the log file
+	saveCodingSessionToLog(userID, startTime, endTime, duration)
 }
