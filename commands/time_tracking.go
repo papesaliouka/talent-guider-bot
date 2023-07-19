@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -14,6 +15,7 @@ type CodingSession struct {
 	UserID    string        `json:"userID"`
 	StartTime time.Time     `json:"startTime"`
 	Duration  time.Duration `json:"duration"`
+	SubjectName string `json:"subjectName"`
 }
 
 type CodingSessionLog struct {
@@ -21,6 +23,7 @@ type CodingSessionLog struct {
 	StartTime time.Time     `json:"startTime"`
 	EndTime   time.Time     `json:"endTime"`
 	Duration  time.Duration `json:"duration"`
+	SubjectName string `json:"subjectName"`
 }
 
 var codingSessions []CodingSession
@@ -33,6 +36,11 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 	if userID == "" {
 		userID = i.Interaction.User.ID
 	}
+
+	subjectNameOption := i.ApplicationCommandData().Options[0]
+	subjectName := subjectNameOption.StringValue()
+
+	subjectName = strings.ToLower(subjectName)
 
 	// Check if there is an active coding session for the user
 	for _, session := range codingSessions {
@@ -52,6 +60,7 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 	codingSessions = append(codingSessions, CodingSession{
 		UserID:    userID,
 		StartTime: time.Now(),
+		SubjectName:subjectName, 
 	})
 
 	// Set a timer for 2 hours
@@ -69,13 +78,14 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 	s.InteractionRespond(i.Interaction, &response)
 }
 
-func saveCodingSessionToLog(userID string, startTime, endTime time.Time, duration time.Duration) error {
+func saveCodingSessionToLog(userID string, startTime, endTime time.Time, duration time.Duration,subjectName string) error {
 	// Convert the session data to CSV format
 	row := []string{
 		userID,
 		startTime.Format(time.RFC3339),
 		endTime.Format(time.RFC3339),
 		duration.String(),
+		subjectName,
 	}
 
 	// Get the current time
@@ -144,6 +154,7 @@ func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCr
 	startTime := codingSessions[sessionIndex].StartTime
 	endTime := time.Now()
 	duration := endTime.Sub(startTime)
+	subjectName := codingSessions[sessionIndex].SubjectName
 
 	// Update the coding session with the end time and duration
 	codingSessions[sessionIndex].Duration = duration
@@ -152,7 +163,7 @@ func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCr
 
 	// Remove the coding session from the slice
 	// Log the coding session to the log file
-	saveCodingSessionToLog(userID, startTime, endTime, duration)
+	saveCodingSessionToLog(userID, startTime, endTime, duration,subjectName)
 
 	codingSessions = append(codingSessions[:sessionIndex], codingSessions[sessionIndex+1:]...)
 }
