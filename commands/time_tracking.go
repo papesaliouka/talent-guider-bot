@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"encoding/json"
+	"encoding/csv"
 	"fmt"
 	"log"
 	"os"
@@ -25,42 +25,12 @@ type CodingSessionLog struct {
 
 var codingSessions []CodingSession
 
-func loadCodingSessionsFromFile() error {
-	file, err := os.Open("sessions.json")
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	err = json.NewDecoder(file).Decode(&codingSessions)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func saveCodingSessionsToFile() error {
-	file, err := os.Create("sessions.json")
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	err = json.NewEncoder(file).Encode(codingSessions)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
+const logDateFormat = "01-2006"
+const logTimeFormat = "2006_01_02"
 
 func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	var userID string
-
-	if i.Interaction.Member != nil {
-		userID = i.Interaction.Member.User.ID
-	} else {
+	userID := i.Interaction.Member.User.ID
+	if userID == "" {
 		userID = i.Interaction.User.ID
 	}
 
@@ -86,16 +56,7 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 
 	// Set a timer for 2 hours
 	time.AfterFunc(2*time.Hour, func() {
-		// Send a reminder to the user that the coding session has ended
-		response := discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: fmt.Sprintf("<@%s>, your coding session has ended. You can start a new 2-hour session by using the /startCoding command.", userID),
-			},
-		}
-		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
-			Content: &response.Data.Content,
-		})
+		handleEndCodingInteraction(s, i)
 	})
 
 	response := discordgo.InteractionResponse{
@@ -106,36 +67,45 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 	}
 
 	s.InteractionRespond(i.Interaction, &response)
-
-	// Save the updated coding sessions to the file
-	err := saveCodingSessionsToFile()
-	if err != nil {
-		log.Printf("Failed to save coding sessions: %v", err)
-	}
 }
 
 func saveCodingSessionToLog(userID string, startTime, endTime time.Time, duration time.Duration) error {
-	sessionLog := CodingSessionLog{
-		UserID:    userID,
-		StartTime: startTime,
-		EndTime:   endTime,
-		Duration:  duration,
+	// Convert the session data to CSV format
+	row := []string{
+		userID,
+		startTime.Format(time.RFC3339),
+		endTime.Format(time.RFC3339),
+		duration.String(),
 	}
 
-	file, err := os.OpenFile("log.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	// Get the current time
+	currentTime := time.Now()
+
+	// Create the folder path
+	folderPath := fmt.Sprintf("./data/sessions-logs/%v", currentTime.Format(logDateFormat))
+
+	// Create the necessary folders if they don't exist
+	err := os.MkdirAll(folderPath, 0755)
 	if err != nil {
+		log.Printf("Failed to create folder: %v", err)
+		return err
+	}
+
+	// Create the log file path
+	logFilePath := fmt.Sprintf("%v/%s_log.csv", folderPath, currentTime.Format(logTimeFormat))
+
+	// Open the log file with the necessary flags and permissions
+	file, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Printf("Failed to open log file: %v", err)
 		return err
 	}
 	defer file.Close()
 
-	logData, err := json.Marshal(sessionLog)
-	if err != nil {
-		return err
-	}
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
 
-	logEntry := string(logData) + "\n"
-
-	_, err = file.WriteString(logEntry)
+	err = writer.Write(row)
 	if err != nil {
 		return err
 	}
@@ -144,11 +114,8 @@ func saveCodingSessionToLog(userID string, startTime, endTime time.Time, duratio
 }
 
 func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	var userID string
-
-	if i.Interaction.Member != nil {
-		userID = i.Interaction.Member.User.ID
-	} else {
+	userID := i.Interaction.Member.User.ID
+	if userID == "" {
 		userID = i.Interaction.User.ID
 	}
 
@@ -181,24 +148,11 @@ func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCr
 	// Update the coding session with the end time and duration
 	codingSessions[sessionIndex].Duration = duration
 
-	response := discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: fmt.Sprintf("<@%s>, your coding session has ended. You coded for %s. You can start a new 2-hour session by using the /startCoding command.", userID, duration.String()),
-		},
-	}
-
-	s.InteractionRespond(i.Interaction, &response)
+	s.ChannelMessageSend(i.Interaction.ChannelID, fmt.Sprintf("<@%s>, your coding session has ended. You coded for %s. You can start a new 2-hour session by using the /startCoding command.", userID, duration))
 
 	// Remove the coding session from the slice
-	codingSessions = append(codingSessions[:sessionIndex], codingSessions[sessionIndex+1:]...)
-
-	// Save the updated coding sessions to the file
-	err := saveCodingSessionsToFile()
-	if err != nil {
-		log.Printf("Failed to save coding sessions: %v", err)
-	}
-
 	// Log the coding session to the log file
 	saveCodingSessionToLog(userID, startTime, endTime, duration)
+
+	codingSessions = append(codingSessions[:sessionIndex], codingSessions[sessionIndex+1:]...)
 }

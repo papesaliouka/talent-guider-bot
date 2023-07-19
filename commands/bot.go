@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -15,11 +14,6 @@ func Start() {
 	if err != nil {
 		fmt.Println(err.Error())
 		return
-	}
-
-	err = loadCodingSessionsFromFile()
-	if err != nil {
-		log.Printf("Failed to load coding sessions: %v", err)
 	}
 
 	u, err := goBot.User("@me")
