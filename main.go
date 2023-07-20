@@ -3,13 +3,21 @@ package main
 import (
 	"fmt"
 	"golang-discord-bot/commands"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := commands.ReadConfig()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	err = commands.ReadConfig()
 
 	if err != nil {
 		fmt.Println(err.Error())

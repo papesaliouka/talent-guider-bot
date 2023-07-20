@@ -27,10 +27,7 @@ func ReadConfig() error {
 	fmt.Println("Reading config from environment variables...")
 
 	// Load environment variables from the .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
+
 
 	// Read the environment variables
 	Token = os.Getenv("Token")
