@@ -10,6 +10,8 @@ import (
 
 func main() {
 
+	//godotenv.Load(".env")
+
 	err := commands.ReadConfig()
 
 	if err != nil {
