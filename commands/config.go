@@ -32,6 +32,11 @@ func ReadConfig() error {
 	GuildID = os.Getenv("GuildID")
 	MongoUrl = os.Getenv("MongoUrl")
 
+	// Check if any of the required environment variables are missing
+	if Token == "" || BotPrefix == "" || GuiderToken == "" || GuildID == "" || MongoUrl == "" {
+		return fmt.Errorf("error: missing required environment variables")
+	}
+
 	// MongoDB connection string
 	mongoURI := MongoUrl
 
