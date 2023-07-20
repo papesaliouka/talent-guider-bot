@@ -2,11 +2,11 @@ package commands
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -19,41 +19,25 @@ var (
 	MongoUrl    string
 	Collection  *mongo.Collection
 	Database    *mongo.Database
-
-	config *configStruct
 )
 
-type configStruct struct {
-	Token       string `json:"Token"`
-	BotPrefix   string `json:"BotPrefix"`
-	GuiderToken string `json:"GuiderToken"`
-	GuildID     string `json:"GuildID"`
-	MongoUrl    string `json:"MongoUrl"`
-}
+
 
 func ReadConfig() error {
-	fmt.Println("Reading config file...")
-	file, err := ioutil.ReadFile("./config.json")
+	fmt.Println("Reading config from environment variables...")
 
+	// Load environment variables from the .env file
+	err := godotenv.Load()
 	if err != nil {
-		fmt.Println(err.Error())
-		return err
+		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	fmt.Println(string(file))
-
-	err = json.Unmarshal(file, &config)
-
-	if err != nil {
-		fmt.Println(err.Error())
-		return err
-	}
-
-	Token = config.Token
-	BotPrefix = config.BotPrefix
-	GuiderToken = config.GuiderToken
-	GuildID = config.GuildID
-	MongoUrl = config.MongoUrl
+	// Read the environment variables
+	Token = os.Getenv("Token")
+	BotPrefix = os.Getenv("BotPrefix")
+	GuiderToken = os.Getenv("GuiderToken")
+	GuildID = os.Getenv("GuildID")
+	MongoUrl = os.Getenv("MongoUrl")
 
 	// MongoDB connection string
 	mongoURI := MongoUrl
@@ -65,7 +49,7 @@ func ReadConfig() error {
 	}
 
 	// Get a handle to the database and collection
-	Database := client.Database("test-bot")
+	Database = client.Database("test-bot")
 	Collection = Database.Collection("test-bot-logs")
 
 	return nil

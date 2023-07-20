@@ -9,17 +9,17 @@ import (
 var BotId string
 
 func Start() {
-	goBot, err := discordgo.New("Bot " + config.Token)
+	goBot, err := discordgo.New("Bot " + Token)
 
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("error reading token",err.Error())
 		return
 	}
 
 	u, err := goBot.User("@me")
 
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("error reading user",err.Error())
 		return
 	}
 
@@ -33,7 +33,7 @@ func Start() {
 	registerSlashCommands(goBot)
 
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("erro openning bot",err.Error())
 		return
 	}
 

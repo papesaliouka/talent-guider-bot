@@ -32,7 +32,7 @@ func handleAskChatInteraction(s *discordgo.Session, i *discordgo.InteractionCrea
 }
 
 func chatWithGPT(question string) (string, error) {
-	client := openai.NewClient(config.GuiderToken)
+	client := openai.NewClient(GuiderToken)
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
