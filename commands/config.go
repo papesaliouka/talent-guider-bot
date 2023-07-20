@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -21,13 +20,10 @@ var (
 	Database    *mongo.Database
 )
 
-
-
 func ReadConfig() error {
 	fmt.Println("Reading config from environment variables...")
 
 	// Load environment variables from the .env file
-
 
 	// Read the environment variables
 	Token = os.Getenv("Token")
