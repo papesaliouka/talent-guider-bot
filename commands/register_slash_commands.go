@@ -16,7 +16,7 @@ func registerSlashCommands(s *discordgo.Session) {
 			Description: "Get the daily challenge exercises taken from checkpoint.",
 		}, {
 			Name:        "startcoding",
-			Description: "Start coding session",			Options: []*discordgo.ApplicationCommandOption{
+			Description: "Start coding session", Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
 					Name:        "subject",
@@ -28,9 +28,6 @@ func registerSlashCommands(s *discordgo.Session) {
 		{
 			Name:        "endcoding",
 			Description: "End coding session",
-		}, {
-			Name:        "generatereport",
-			Description: "Generate a report for the coding activities of all members",
 		},
 		{
 			Name:        "projectlist",
