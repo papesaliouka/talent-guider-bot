@@ -1,9 +1,14 @@
 package commands
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
@@ -11,6 +16,9 @@ var (
 	BotPrefix   string
 	GuiderToken string
 	GuildID     string
+	MongoUrl    string
+	Collection  *mongo.Collection
+	Database    *mongo.Database
 
 	config *configStruct
 )
@@ -20,6 +28,7 @@ type configStruct struct {
 	BotPrefix   string `json:"BotPrefix"`
 	GuiderToken string `json:"GuiderToken"`
 	GuildID     string `json:"GuildID"`
+	MongoUrl    string `json:"MongoUrl"`
 }
 
 func ReadConfig() error {
@@ -44,6 +53,20 @@ func ReadConfig() error {
 	BotPrefix = config.BotPrefix
 	GuiderToken = config.GuiderToken
 	GuildID = config.GuildID
+	MongoUrl = config.MongoUrl
+
+	// MongoDB connection string
+	mongoURI := MongoUrl
+
+	// Connect to MongoDB
+	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(mongoURI))
+	if err != nil {
+		log.Fatalf("Failed to connect to MongoDB: %v", err)
+	}
+
+	// Get a handle to the database and collection
+	Database := client.Database("test-bot")
+	Collection = Database.Collection("test-bot-logs")
 
 	return nil
 }

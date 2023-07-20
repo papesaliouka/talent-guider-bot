@@ -2,5 +2,6 @@
   "Token" : "MTEyNzQwNzc0NzY1NTI5MDk1Mg.GGNDD6.MKedOrRmppPl6QrhWyQXE9pzJQdyITGCw_Abys", 
   "BotPrefix" : "/",
   "GuiderToken":"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",
-  "GuildID":"1126102827492724736"
+  "GuildID":"1126102827492724736",
+  "MongoUrl":"mongodb+srv://pskath1:sb2yyNkaCJtPJ5h4@mongoflix.tw5gy.mongodb.net/"
 }

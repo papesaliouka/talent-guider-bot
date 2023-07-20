@@ -1,35 +1,33 @@
 package commands
 
 import (
-	"encoding/csv"
+	"context"
 	"fmt"
 	"log"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type CodingSession struct {
-	UserID    string        `json:"userID"`
-	StartTime time.Time     `json:"startTime"`
-	Duration  time.Duration `json:"duration"`
-	SubjectName string `json:"subjectName"`
+	UserID      string        `json:"userID"`
+	StartTime   time.Time     `json:"startTime"`
+	Duration    time.Duration `json:"duration"`
+	SubjectName string        `json:"subjectName"`
 }
 
 type CodingSessionLog struct {
-	UserID    string        `json:"userID"`
-	StartTime time.Time     `json:"startTime"`
-	EndTime   time.Time     `json:"endTime"`
-	Duration  time.Duration `json:"duration"`
-	SubjectName string `json:"subjectName"`
+	UserID      string        `json:"userID"`
+	StartTime   time.Time     `json:"startTime"`
+	EndTime     time.Time     `json:"endTime"`
+	Duration    time.Duration `json:"duration"`
+	SubjectName string        `json:"subjectName"`
 }
 
 var codingSessions []CodingSession
-
-const logDateFormat = "01-2006"
-const logTimeFormat = "2006_01_02"
 
 func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	userID := i.Interaction.Member.User.ID
@@ -58,9 +56,9 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 
 	// Store the coding session in the slice
 	codingSessions = append(codingSessions, CodingSession{
-		UserID:    userID,
-		StartTime: time.Now(),
-		SubjectName:subjectName, 
+		UserID:      userID,
+		StartTime:   time.Now(),
+		SubjectName: subjectName,
 	})
 
 	// Set a timer for 2 hours
@@ -78,45 +76,19 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 	s.InteractionRespond(i.Interaction, &response)
 }
 
-func saveCodingSessionToLog(userID string, startTime, endTime time.Time, duration time.Duration,subjectName string) error {
-	// Convert the session data to CSV format
-	row := []string{
-		userID,
-		startTime.Format(time.RFC3339),
-		endTime.Format(time.RFC3339),
-		duration.String(),
-		subjectName,
-	}
+func saveCodingSessionToLog(userID string, startTime, endTime time.Time, duration time.Duration, subjectName, username string, collection *mongo.Collection) error {
 
-	// Get the current time
-	currentTime := time.Now()
-
-	// Create the folder path
-	folderPath := fmt.Sprintf("./data/sessions-logs/%v", currentTime.Format(logDateFormat))
-
-	// Create the necessary folders if they don't exist
-	err := os.MkdirAll(folderPath, 0755)
+	// Insert the data into MongoDB
+	_, err := collection.InsertOne(context.Background(), bson.D{
+		{Key: "userID", Value: userID},
+		{Key: "username", Value: username},
+		{Key: "startTime", Value: startTime},
+		{Key: "endTime", Value: endTime},
+		{Key: "duration", Value: duration},
+		{Key: "subjectName", Value: subjectName},
+	})
 	if err != nil {
-		log.Printf("Failed to create folder: %v", err)
-		return err
-	}
-
-	// Create the log file path
-	logFilePath := fmt.Sprintf("%v/%s_log.csv", folderPath, currentTime.Format(logTimeFormat))
-
-	// Open the log file with the necessary flags and permissions
-	file, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Printf("Failed to open log file: %v", err)
-		return err
-	}
-	defer file.Close()
-
-	writer := csv.NewWriter(file)
-	defer writer.Flush()
-
-	err = writer.Write(row)
-	if err != nil {
+		log.Printf("Failed to insert data into MongoDB: %v", err)
 		return err
 	}
 
@@ -125,8 +97,10 @@ func saveCodingSessionToLog(userID string, startTime, endTime time.Time, duratio
 
 func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	userID := i.Interaction.Member.User.ID
+	username := i.Interaction.Member.User.Username
 	if userID == "" {
 		userID = i.Interaction.User.ID
+		username = i.Interaction.User.Username
 	}
 
 	// Find the coding session for the user
@@ -163,7 +137,7 @@ func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCr
 
 	// Remove the coding session from the slice
 	// Log the coding session to the log file
-	saveCodingSessionToLog(userID, startTime, endTime, duration,subjectName)
+	saveCodingSessionToLog(userID, startTime, endTime, duration, subjectName, username, Collection)
 
 	codingSessions = append(codingSessions[:sessionIndex], codingSessions[sessionIndex+1:]...)
 }
