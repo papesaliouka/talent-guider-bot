@@ -12,7 +12,7 @@ import (
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Check if the message is from the channel where commit messages are sent
-	if m.ChannelID == "1131623698646958223" || m.ChannelID == "1131619853300678798" || m.ChannelID == "1130175812977565696" {
+	if m.ChannelID == "1131623698646958223" || m.ChannelID == "1131619853300678798" || m.ChannelID == "1130175812977565696" ||m.ChannelID == "1131935365469585438" {
 		err := saveCommitMessage(m.Content)
 		if err != nil {
 			fmt.Println(err.Error())
