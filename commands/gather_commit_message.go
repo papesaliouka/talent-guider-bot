@@ -4,66 +4,64 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/bwmarrin/discordgo"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	// Check if the message is from the channel where commit messages are sent
-	if m.ChannelID == "1131623698646958223" || m.ChannelID == "1131619853300678798" || m.ChannelID == "1130175812977565696" ||m.ChannelID == "1131935365469585438" {
-		err := saveCommitMessage(m.Content)
+	// Define the channel IDs for commit messages
+	commitChannelIDs := []string{
+		"1131623698646958223",
+		"1131619853300678798",
+		"1130175812977565696",
+		"1131935365469585438",
+	}
+
+	// Check if the message is from one of the commit message channels
+	if containsBis(commitChannelIDs, m.ChannelID) && len(m.Message.Embeds) > 0 {
+		embed := m.Message.Embeds[0]
+
+		// Extract username, title (repoBranchLine), and commits from the embed
+		username := embed.Author.Name
+		description := embed.Description
+		title := embed.Title
+
+		// Call the saveCommitMessage function to save the data to MongoDB
+		err := saveCommitMessage(CommitMessage{
+			Username:    username,
+			Title:       title,
+			Description: description,
+		})
 		if err != nil {
 			fmt.Println(err.Error())
 		}
 	}
+}
 
+func containsBis(arr []string, str string) bool {
+	for _, a := range arr {
+		if a == str {
+			return true
+		}
+	}
+	return false
 }
 
 type CommitMessage struct {
-	Username string   `json:"username"`
-	Repo     string   `json:"repository"`
-	Branch   string   `json:"branch"`
-	Commits  []string `json:"commits"`
+	Username    string `json:"username"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }
 
-func saveCommitMessage(commitMessage string) error {
-	// Extract the relevant information from the commit message
-	lines := strings.Split(commitMessage, "\n")
-	if len(lines) < 2 {
-		log.Println("Invalid commit message format")
-		return fmt.Errorf("invalid commit message format")
-	}
-
-	username := lines[0]
-	repoBranchLine := lines[1]
-	repoBranchParts := strings.Split(repoBranchLine, "[")
-	if len(repoBranchParts) != 2 {
-		log.Println("Invalid commit message format")
-		return fmt.Errorf("invalid commit message format")
-	}
-
-	repoBranch := strings.TrimSuffix(repoBranchParts[1], "]")
-	repoBranchParts = strings.Split(repoBranch, ":")
-	if len(repoBranchParts) != 2 {
-		log.Println("Invalid commit message format")
-		return fmt.Errorf("invalid commit message format")
-	}
-
-	repo := strings.TrimSpace(repoBranchParts[0])
-	branch := strings.TrimSpace(repoBranchParts[1])
-
-	commits := lines[2:]
-
+func saveCommitMessage(commitMsg CommitMessage) error {
 	collection := Database.Collection("commits")
 
 	// Insert the data into MongoDB
-	_, err := collection.InsertOne(context.Background(), bson.D{
-		{Key: "username", Value: username},
-		{Key: "repo", Value: repo},
-		{Key: "branch", Value: branch},
-		{Key: "commits", Value: commits},
+	_, err := collection.InsertOne(context.Background(), bson.M{
+		"username":    commitMsg.Username,
+		"title":       commitMsg.Title,
+		"description": commitMsg.Description,
 	})
 	if err != nil {
 		log.Printf("Failed to insert data into MongoDB: %v", err)
