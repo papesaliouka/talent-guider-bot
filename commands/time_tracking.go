@@ -30,7 +30,14 @@ type CodingSessionLog struct {
 var codingSessions []CodingSession
 
 func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	userID := i.Interaction.Member.User.ID
+
+	var userID string
+
+	if i.Interaction.Member !=nil{
+		userID = i.Interaction.Member.User.ID
+	}
+
+	
 	if userID == "" {
 		userID = i.Interaction.User.ID
 	}
@@ -96,8 +103,17 @@ func saveCodingSessionToLog(userID string, startTime, endTime time.Time, duratio
 }
 
 func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	userID := i.Interaction.Member.User.ID
-	username := i.Interaction.Member.User.Username
+
+	var(
+		userID string
+		username string
+	) 
+
+	if i.Interaction.Member !=nil{
+		userID = i.Interaction.Member.User.ID
+		username = i.Interaction.Member.User.Username
+	}
+
 	if userID == "" {
 		userID = i.Interaction.User.ID
 		username = i.Interaction.User.Username
