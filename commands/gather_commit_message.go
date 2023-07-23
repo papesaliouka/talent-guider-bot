@@ -21,9 +21,7 @@ type CommitMessage struct {
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Define the channel IDs for commit messages
 	commitChannelIDs := []string{
-		"1131623698646958223",
 		"1131619853300678798",
-		"1130175812977565696",
 		"1131935365469585438",
 	}
 
