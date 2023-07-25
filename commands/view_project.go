@@ -45,7 +45,7 @@ func sendMultipleMessages(s *discordgo.Session, interaction *discordgo.Interacti
 		// }
 
 		// Send the response message
-		_, err := s.ChannelMessageSend(interaction.ChannelID, fmt.Sprintf("```Readme for project %s (Part %d):\n```%s``````", projectName, i+1, chunk))
+		_, err := s.ChannelMessageSend(interaction.ChannelID, fmt.Sprintf("```Readme for project %s (Part %d):\n```%s``````", projectName, i+1, strings.ReplaceAll(chunk, "#", "")))
 		if err != nil {
 			log.Printf("Failed to send message: %v", err)
 		}
