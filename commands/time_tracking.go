@@ -39,7 +39,15 @@ func handleStartCodingInteraction(s *discordgo.Session, i *discordgo.Interaction
 
 	
 	if userID == "" {
-		userID = i.Interaction.User.ID
+
+		response := discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: "Please use this command in the dedicated servers.",
+			},
+		}
+		s.InteractionRespond(i.Interaction, &response)
+		return
 	}
 
 	subjectNameOption := i.ApplicationCommandData().Options[0]
@@ -111,12 +119,19 @@ func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCr
 
 	if i.Interaction.Member !=nil{
 		userID = i.Interaction.Member.User.ID
-		username = i.Interaction.Member.User.Username
+		username = i.Interaction.Member.Nick
 	}
 
 	if userID == "" {
-		userID = i.Interaction.User.ID
-		username = i.Interaction.User.Username
+		response := discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: "Please use this command in the dedicated servers.",
+			},
+		}
+		s.InteractionRespond(i.Interaction, &response)
+		return
+
 	}
 
 	// Find the coding session for the user
@@ -143,7 +158,7 @@ func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCr
 	// Calculate the duration and end time of the coding session
 	startTime := codingSessions[sessionIndex].StartTime
 	endTime := time.Now()
-	duration := endTime.Sub(startTime)
+	duration := endTime.Sub(startTime).Round(time.Second)
 	subjectName := codingSessions[sessionIndex].SubjectName
 
 	// Update the coding session with the end time and duration
