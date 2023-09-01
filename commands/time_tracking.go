@@ -99,7 +99,7 @@ func saveCodingSessionToLog(userID string, startTime, endTime time.Time, duratio
 		{Key: "username", Value: username},
 		{Key: "startTime", Value: startTime},
 		{Key: "endTime", Value: endTime},
-		{Key: "duration", Value: duration},
+		{Key: "duration", Value: duration.Abs().Minutes()},
 		{Key: "subjectName", Value: subjectName},
 	})
 	if err != nil {
