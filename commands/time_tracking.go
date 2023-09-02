@@ -120,6 +120,9 @@ func handleEndCodingInteraction(s *discordgo.Session, i *discordgo.InteractionCr
 	if i.Interaction.Member !=nil{
 		userID = i.Interaction.Member.User.ID
 		username = i.Interaction.Member.Nick
+        if username == "" {
+            username = i.Interaction.Member.User.Username
+        }   
 	}
 
 	if userID == "" {
