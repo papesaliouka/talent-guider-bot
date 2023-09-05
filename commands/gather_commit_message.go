@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
-
+    "time"
 	"github.com/bwmarrin/discordgo"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -16,7 +16,7 @@ type CommitMessage struct {
 	Description string `json:"description"`
 	Repo        string `json:"repoName"`
 	Branch      string `json:"branchName"`
-    Date        string `json:"date"`
+    Date        time.Time   `json:"date"`
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -35,7 +35,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		description := embed.Description
 		title := embed.Title
 		repo, branch := extractRepoAndBranch(title)
-        date := embed.Timestamp
+        date := time.Now().UTC()
 
 
 		// Call the saveCommitMessage function to save the data to MongoDB
