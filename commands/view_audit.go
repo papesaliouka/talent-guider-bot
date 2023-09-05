@@ -15,21 +15,31 @@ func handleViewAuditInteraction(s *discordgo.Session, i *discordgo.InteractionCr
 	projectName := projectNameOption.StringValue()
 
 	projectName = strings.ToLower(projectName)
+    projectUrl:=fmt.Sprintf("https://github.com/01-edu/public/tree/master/subjects/%s/audit", projectName)
+    response := &discordgo.InteractionResponse{
+        Type: discordgo.InteractionResponseChannelMessageWithSource,
+        Data: &discordgo.InteractionResponseData{
+            Content: fmt.Sprintf("Audit for project: %s \n %s", projectName, projectUrl),
+        },
+    }
+    s.InteractionRespond(i.Interaction, response)
 
-	readmeContent, err := getAuditReadmeContent(projectName)
-	if err != nil {
-		log.Printf("Failed to fetch readme content: %v", err)
-		response := &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: fmt.Sprintf("Failed to fetch readme for project: %s. Maybe the project name you provided is incorrect. Verify if it is correct ", projectName),
-			},
-		}
-		s.InteractionRespond(i.Interaction, response)
-		return
-	}
 
-	sendMultipleMessages(s, i.Interaction, projectName, readmeContent)
+
+	//readmeContent, err := getAuditReadmeContent(projectName)
+	//if err != nil {
+	//	log.Printf("Failed to fetch readme content: %v", err)
+	//	response := &discordgo.InteractionResponse{
+	//		Type: discordgo.InteractionResponseChannelMessageWithSource,
+	//		Data: &discordgo.InteractionResponseData{
+	//			Content: fmt.Sprintf("Failed to fetch readme for project: %s. Maybe the project name you provided is incorrect. Verify if it is correct ", projectName),
+	//		},
+	//	}
+	//	s.InteractionRespond(i.Interaction, response)
+	//	return
+	//}
+
+    //sendMultipleMessages(s, i.Interaction, projectName, readmeContent)
 }
 
 func getAuditReadmeContent(exerciseName string) (string, error) {

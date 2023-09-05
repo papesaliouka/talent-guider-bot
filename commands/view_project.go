@@ -16,20 +16,31 @@ func handleViewProjectInteraction(s *discordgo.Session, i *discordgo.Interaction
 
 	projectName = strings.ToLower(projectName)
 
-	readmeContent, err := getReadmeContent(projectName)
-	if err != nil {
-		log.Printf("Failed to fetch readme content: %v", err)
-		response := &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: fmt.Sprintf("Failed to fetch readme for project: %s. Maybe the project name you provided is incorrect. Verify if it is correct ", projectName),
-			},
-		}
-		s.InteractionRespond(i.Interaction, response)
-		return
-	}
+    projectUrl:=fmt.Sprintf("https://github.com/01-edu/public/tree/master/subjects/%s", projectName)
+    response := &discordgo.InteractionResponse{
+        Type: discordgo.InteractionResponseChannelMessageWithSource,
+        Data: &discordgo.InteractionResponseData{
+            Content: fmt.Sprintf("%s: %s", projectName, projectUrl),
+        },
+    }
+    s.InteractionRespond(i.Interaction, response)
 
-	sendMultipleMessages(s, i.Interaction, projectName, readmeContent)
+    return;
+        
+//	readmeContent, err := getReadmeContent(projectName)
+//	if err != nil {
+//		log.Printf("Failed to fetch readme content: %v", err)
+//		response := &discordgo.InteractionResponse{
+//			Type: discordgo.InteractionResponseChannelMessageWithSource,
+//			Data: &discordgo.InteractionResponseData{
+//				Content: fmt.Sprintf("Failed to fetch readme for project: %s. Maybe the project name you provided is incorrect. Verify if it is correct ", projectName),
+//			},
+//		}
+//		s.InteractionRespond(i.Interaction, response)
+//		return
+//	}
+
+//	sendMultipleMessages(s, i.Interaction, projectName, readmeContent)
 }
 
 func sendMultipleMessages(s *discordgo.Session, interaction *discordgo.Interaction, projectName, content string) {

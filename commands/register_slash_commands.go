@@ -31,10 +31,10 @@ func registerSlashCommands(s *discordgo.Session) {
 		},
 		{
 			Name:        "projectlist",
-			Description: "Get the list of all 01 projects for the 18month",
+			Description: "Get the list of all 01 projects for the 18 month",
 		}, {
 			Name:        "viewproject",
-			Description: "Show the readme of a project in the 01-edu repo only the mandatory projects for now not optionals",
+			Description: "Github link of a project in the 01-edu repo",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
@@ -43,24 +43,12 @@ func registerSlashCommands(s *discordgo.Session) {
 					Required:    true,
 				},
 			},
-		}, {
-			Name:        "viewaudit",
-			Description: "Show the readme of an audit in the 01-edu repo only the mandatory projects.",
-			Options: []*discordgo.ApplicationCommandOption{
-				{
-					Type:        discordgo.ApplicationCommandOptionString,
-					Name:        "auditname",
-					Description: "The project name",
-					Required:    true,
-				},
-			},
-		},
-		{
+		},{
 			Name:        "help",
 			Description: "Display the available commands for Talent Guider.",
 		}, {
 			Name:        "selectexercise",
-			Description: "Show the exercise list for a given level in the checpoint.",
+			Description: "Show the exercise list for a given level in the checkpoint.",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionInteger,

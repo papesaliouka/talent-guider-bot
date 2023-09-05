@@ -16,23 +16,16 @@ func interactionCreateHandler(s *discordgo.Session, i *discordgo.InteractionCrea
 			handleProjectListInteraction(s, i)
 		case "viewproject":
 			handleViewProjectInteraction(s, i)
-		case "viewaudit":
-			handleViewAuditInteraction(s, i)
 		case "help":
 			handleHelpInteraction(s, i)
 		case "selectexercise":
 			handleShowExerciseInteraction(s, i)
 		case "dailychallenge":
 			handleDailyChallengeInteraction(s, i)
-		case "askchat":
-			handleAskChatInteraction(s, i)
 		case "startcoding":
 			handleStartCodingInteraction(s, i)
 		case "endcoding":
 			handleEndCodingInteraction(s, i)
-		case "generatereport":
-			// Handle sendreport interaction
-			handleGenerateReportInteraction(s, i)
 		}
 	case discordgo.InteractionMessageComponent:
 		switch i.MessageComponentData().CustomID {
