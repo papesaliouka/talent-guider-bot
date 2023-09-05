@@ -16,6 +16,7 @@ type CommitMessage struct {
 	Description string `json:"description"`
 	Repo        string `json:"repoName"`
 	Branch      string `json:"branchName"`
+    Date        string `json:"date"`
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -34,6 +35,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		description := embed.Description
 		title := embed.Title
 		repo, branch := extractRepoAndBranch(title)
+        date := embed.Timestamp
+
 
 		// Call the saveCommitMessage function to save the data to MongoDB
 		err := saveCommitMessage(CommitMessage{
@@ -42,6 +45,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			Description: description,
 			Repo:        repo,
 			Branch:      branch,
+            Date:        date,
 		})
 		if err != nil {
 			fmt.Println(err.Error())
@@ -83,6 +87,7 @@ func saveCommitMessage(commitMsg CommitMessage) error {
 		"description": commitMsg.Description,
 		"repo":        commitMsg.Repo,
 		"branch":      commitMsg.Branch,
+        "date":        commitMsg.Date,
 	})
 	if err != nil {
 		log.Printf("Failed to insert data into MongoDB: %v", err)
